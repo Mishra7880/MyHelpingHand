@@ -6,14 +6,16 @@ const jwt = require("jsonwebtoken");
 
 // Register API
 router.post("/register", async (req, res) => {
-    const { name, email, password } = req.body;
+    const { name, email, password, role } = req.body;
 
     try {
         const hashedPassword = await bcrypt.hash(password, 10);
 
-        const sql = "INSERT INTO users (name, email, password) VALUES (?, ?, ?)";
+        const sql = "INSERT INTO users (name, email, password, role) VALUES (?, ?, ?, ?)";
+
+            db.query(sql, [name, email, hashedPassword, role || "user"], (err, result) => {
         
-        db.query(sql, [name, email, hashedPassword], (err, result) => {
+        
             if (err) {
                 return res.status(500).json({ error: err });
             }
@@ -52,7 +54,7 @@ router.post("/login", (req, res) => {
         }
 
         const token = jwt.sign(
-    { id: user.id, email: user.email },
+    { id: user.id, email: user.email, role: user.role },
     "secretkey",
     { expiresIn: "1h" }
 );
