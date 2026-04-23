@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const db = require("../config/db");
 const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
 
 // Register API
 router.post("/register", async (req, res) => {
@@ -50,6 +51,15 @@ router.post("/login", (req, res) => {
             return res.status(401).json({ message: "Invalid password" });
         }
 
-        res.json({ message: "Login successful" });
+        const token = jwt.sign(
+    { id: user.id, email: user.email },
+    "secretkey",
+    { expiresIn: "1h" }
+);
+
+res.json({
+    message: "Login successful",
+    token: token
+});
     });
 });
