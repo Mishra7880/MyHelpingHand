@@ -24,3 +24,12 @@ const db = require("./config/db");
 const userRoutes = require("./routes/userRoutes");
 
 app.use("/api/users", userRoutes);
+
+const verifyToken = require("./middleware/authMiddleware");
+
+app.get("/api/protected", verifyToken, (req, res) => {
+    res.json({
+        message: "Protected route accessed",
+        user: req.user
+    });
+});
